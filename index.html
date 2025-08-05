@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الإدارة - FreeGoat Manga</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-shield-alt"></i>
+                <h1>لوحة تحكم الإدارة</h1>
+                <p>FreeGoat Manga Admin Dashboard</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">اسم المستخدم</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">كلمة المرور</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    تسجيل الدخول
+                </button>
+            </form>
+            <div id="loginError" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم الرئيسية -->
+    <div id="dashboardScreen" class="dashboard-screen" style="display: none;">
+        <!-- شريط التنقل العلوي -->
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>لوحة تحكم الإدارة</span>
+            </div>
+            <div class="nav-actions">
+                <button id="refreshBtn" class="nav-btn" title="تحديث البيانات">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button id="logoutBtn" class="nav-btn" title="تسجيل الخروج">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <!-- التبويبات -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="notifications">
+                    <i class="fas fa-bell"></i>
+                    الإشعارات
+                </button>
+                <button class="tab-btn" data-tab="repositories">
+                    <i class="fas fa-database"></i>
+                    المستودعات
+                </button>
+                <button class="tab-btn" data-tab="statistics">
+                    <i class="fas fa-chart-bar"></i>
+                    الإحصائيات
+                </button>
+            </div>
+
+            <!-- محتوى التبويبات -->
+            <div class="tab-content">
+                <!-- تبويب الإشعارات -->
+                <div id="notifications" class="tab-pane active">
+                    <div class="section-header">
+                        <h2><i class="fas fa-bell"></i> إدارة الإشعارات</h2>
+                    </div>
+                    
+                    <!-- إرسال إشعار جديد -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-plus"></i> إرسال إشعار جديد</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="notificationForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="notificationTitle">عنوان الإشعار</label>
+                                        <input type="text" id="notificationTitle" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="notificationType">نوع الإشعار</label>
+                                        <select id="notificationType">
+                                            <option value="general">عام</option>
+                                            <option value="update">تحديث التطبيق</option>
+                                            <option value="newManga">مانجا جديدة</option>
+                                            <option value="maintenance">صيانة</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="notificationBody">محتوى الإشعار</label>
+                                    <textarea id="notificationBody" rows="3" required></textarea>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="notificationPriority">الأولوية</label>
+                                        <select id="notificationPriority">
+                                            <option value="low">منخفضة</option>
+                                            <option value="medium" selected>متوسطة</option>
+                                            <option value="high">عالية</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane"></i>
+                                            إرسال الإشعار
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- قائمة الإشعارات -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-list"></i> الإشعارات الأخيرة</h3>
+                            <button id="refreshNotifications" class="btn btn-secondary">
+                                <i class="fas fa-sync-alt"></i>
+                                تحديث
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="notificationsList" class="notifications-list">
+                                <div class="loading">جاري تحميل الإشعارات...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تبويب المستودعات -->
+                <div id="repositories" class="tab-pane">
+                    <div class="section-header">
+                        <h2><i class="fas fa-database"></i> إدارة المستودعات</h2>
+                    </div>
+                    
+                    <!-- إضافة مستودع جديد -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-plus"></i> إضافة مستودع جديد</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="repositoryForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="repoName">اسم المستودع</label>
+                                        <input type="text" id="repoName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="repoUrl">رابط المستودع</label>
+                                        <input type="url" id="repoUrl" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="repoDescription">الوصف</label>
+                                    <textarea id="repoDescription" rows="2"></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i>
+                                        إضافة المستودع
+                                    </button>
+                                    <button type="button" id="refreshAllRepos" class="btn btn-warning">
+                                        <i class="fas fa-sync-alt"></i>
+                                        تحديث جميع المستودعات
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- قائمة المستودعات -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-list"></i> المستودعات الحالية</h3>
+                            <button id="refreshRepositories" class="btn btn-secondary">
+                                <i class="fas fa-sync-alt"></i>
+                                تحديث
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="repositoriesList" class="repositories-list">
+                                <div class="loading">جاري تحميل المستودعات...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تبويب الإحصائيات -->
+                <div id="statistics" class="tab-pane">
+                    <div class="section-header">
+                        <h2><i class="fas fa-chart-bar"></i> الإحصائيات والتحليلات</h2>
+                    </div>
+                    
+                    <!-- بطاقات الإحصائيات -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalNotifications">0</h3>
+                                <p>إجمالي الإشعارات</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="totalRepositories">0</h3>
+                                <p>إجمالي المستودعات</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="activeRepositories">0</h3>
+                                <p>المستودعات النشطة</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="sentNotifications">0</h3>
+                                <p>الإشعارات المرسلة</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- إجراءات سريعة -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bolt"></i> إجراءات سريعة</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-actions">
+                                <button id="clearCacheBtn" class="action-btn">
+                                    <i class="fas fa-broom"></i>
+                                    <span>تنظيف الذاكرة المؤقتة</span>
+                                </button>
+                                <button id="exportDataBtn" class="action-btn">
+                                    <i class="fas fa-download"></i>
+                                    <span>تصدير البيانات</span>
+                                </button>
+                                <button id="refreshStatsBtn" class="action-btn">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span>تحديث الإحصائيات</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسائل التنبيه -->
+    <div id="toast" class="toast"></div>
+
+    <!-- نافذة التأكيد -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">تأكيد العملية</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">هل أنت متأكد من هذا الإجراء؟</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmCancel" class="btn btn-secondary">إلغاء</button>
+                <button id="confirmOk" class="btn btn-danger">تأكيد</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
