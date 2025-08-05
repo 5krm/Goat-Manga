@@ -1,5 +1,5 @@
 // متغيرات عامة
-const API_BASE = '/admin/api';
+const API_BASE = 'http://localhost:8080/api';
 let currentUser = null;
 let notifications = [];
 let repositories = [];
